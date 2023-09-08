@@ -7,8 +7,9 @@ const IPAddress serverIP(192, 168, 4, 1); // IP do servidor ESP8266
 const uint16_t serverPort = 80;           // Porta do servidor ESP8266
 
 WiFiClient client;
-void conecta(){
-    // Conectando-se ao WiFi
+void conecta()
+{
+  // Conectando-se ao WiFi
   Serial.print("Conectando-se a ");
   Serial.println(ssid);
 
@@ -35,33 +36,39 @@ void setup()
 
 void loop()
 {
-  // Seu código aqui
   if (WiFi.status() == WL_CONNECTED)
   {
-    Serial.println("Enviando mensagem pro servidor...");
-    // Enviar uma mensagem para o servidor
-    client.println("Olá, servidor!");
+    if (client.connect(serverIP, serverPort))
+    { // Estabelece conexão TCP
+      Serial.println("Enviando mensagem pro servidor...");
+      client.println("Olá, servidor!");
 
-    // Aguarde uma resposta (opcional)
-    String response = "";
-    while (client.available())
-    {
-      char dt = char(client.read());
-      response += dt;
-      Serial.print("dt");
-    }
-    
-      Serial.println("");
-    if (response.length() > 0)
-    {
-      Serial.println("Resposta do servidor:");
-      Serial.println(response);
-    }else {
-      Serial.println("ERROR");
+      String response = "";
+      long timeout = millis() + 5000;  // Define um timeout de 5 segundos
+      while (millis() < timeout) {
+        while (client.available()) {
+          char dt = char(client.read());
+          response += dt;
+        }
+      }
+
+      if (response.length() > 0)
+      {
+        Serial.println("Resposta do servidor:");
+        Serial.println(response);
+      }
+      else
+      {
+        Serial.println("ERROR");
+      }
+
+      client.stop(); // Fecha a conexão TCP
     }
 
-    delay(5000); // Espere 5 segundos antes de enviar a próxima mensagem
-  }else {
+    delay(10000); // Espere 10 segundos antes de enviar a próxima mensagem
+  }
+  else
+  {
     Serial.println("NÃO CONECTADO");
     delay(1000);
     conecta();

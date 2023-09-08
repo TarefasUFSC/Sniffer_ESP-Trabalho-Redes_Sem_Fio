@@ -5,12 +5,13 @@ const char *ssid = "ESP-B_Carrinho";
 // Defines a Port
 WiFiServer server(80);
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
 
   // Configura o ESP8266 para operar apenas como um Access Point
   WiFi.mode(WIFI_AP);
-  
+
   // Cria um Access Point sem senha
   WiFi.softAP(ssid);
 
@@ -22,15 +23,18 @@ void setup() {
   Serial.println(WiFi.softAPIP());
 }
 
-void loop() {
+void loop()
+{
   // Verifica se há algum cliente tentando se conectar
   WiFiClient client = server.available();
-  
-  if (client) {
+
+  if (client)
+  {
     Serial.println("Cliente conectado!");
 
     // Aguarda até que o cliente envie algum dado
-    while (!client.available()) {
+    while (!client.available())
+    {
       delay(1);
     }
 
@@ -40,6 +44,10 @@ void loop() {
     Serial.println(message);
 
     // Fecha a conexão com o cliente
+    client.println("HTTP/1.1 200 OK\n\n");
+    
+    client.flush();
     client.stop();
+    Serial.println("Fechando Conexão");
   }
 }
