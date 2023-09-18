@@ -41,12 +41,56 @@ void loop()
     if (client.connect(serverIP, serverPort))
     { // Estabelece conexão TCP
       Serial.println("Enviando mensagem pro servidor...");
-      client.println("Olá, servidor!");
+
+      String request = ""; // Construir a solicitação HTTP
+
+      char key = 0; // Tecla pressionada (inicialmente vazia)
+      while (key == 0)
+      {
+        
+        if (Serial.available() > 0)
+        {
+          key = Serial.read();
+        }
+        else{
+          continue;
+        }
+        if (key == 'w')
+        {
+          request = "w";
+        }
+        else if (key == 'a')
+        {
+          request = "a";
+        }
+        else if (key == 's')
+        {
+          request = "s";
+        }
+        else if (key == 'd')
+        {
+          request = "d";
+        }
+        else
+        {
+          Serial.println("INVALIDO");
+          key = 0;
+        }
+      }
+
+      if (!request.equals(""))
+      {
+        Serial.println("Enviando solicitação para o carrinho...");
+        client.println(request);
+        delay(1000); // Aguarde para garantir que a solicitação seja enviada completamente
+      }
 
       String response = "";
-      long timeout = millis() + 5000;  // Define um timeout de 5 segundos
-      while (millis() < timeout) {
-        while (client.available()) {
+      long timeout = millis() + 5000; // Define um timeout de 5 segundos
+      while (millis() < timeout)
+      {
+        while (client.available())
+        {
           char dt = char(client.read());
           response += dt;
         }
@@ -65,7 +109,7 @@ void loop()
       client.stop(); // Fecha a conexão TCP
     }
 
-    delay(10000); // Espere 10 segundos antes de enviar a próxima mensagem
+    delay(100); // Espere 10 segundos antes de enviar a próxima mensagem
   }
   else
   {
