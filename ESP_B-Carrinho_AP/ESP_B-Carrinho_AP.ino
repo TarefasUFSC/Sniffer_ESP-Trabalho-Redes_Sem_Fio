@@ -55,7 +55,7 @@ void loop()
     Serial.println("Cliente conectado!");
 
     // Aguarda até que o cliente envie algum dado
-    while (!client.available())
+    while (!client.available() && client)
     {
       delay(1);
     }

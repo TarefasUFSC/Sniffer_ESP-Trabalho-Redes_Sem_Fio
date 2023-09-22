@@ -51,10 +51,13 @@ void loop()
         if (Serial.available() > 0)
         {
           key = Serial.read();
+          
         }
         else{
           continue;
         }
+        if(key == 10) {key = 0;continue;}
+
         if (key == 'w')
         {
           request = "w";
@@ -73,7 +76,8 @@ void loop()
         }
         else
         {
-          Serial.println("INVALIDO");
+          Serial.print("INVALIDO CHAR = ");
+          Serial.println((int)key);
           key = 0;
         }
       }
